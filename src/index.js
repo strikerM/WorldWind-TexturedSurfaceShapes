@@ -47,22 +47,23 @@ function onToggleClick() {
 const fileSelector = document.querySelector('#file-input');
 fileSelector.addEventListener('change', onFileSelected, false);
 
-function onFileSelected(event) {
-    const file = event.target.files[0];
+async function onFileSelected(event) {
+    try {
+        const file = event.target.files[0];
 
-    if (!file) {
-        return;
+        if (!file) {
+            return;
+        }
+    
+        const dataUrl = await readFileAsDataUrl(file);
+        shapeImage = await createImage(dataUrl);
+
+        shape.image = shapeImage;
+        wwd.redraw();
     }
-
-    readFileAsDataUrl(file)
-        .then(createImage)
-        .then(image => {
-            shape.image = image;
-            shapeImage = image;
-            wwd.redraw();
-        })
-        .catch(err => console.error(err));
-
+    catch(error) {
+        console.error(error);
+    }
 }
 
 function readFileAsDataUrl(file) {
@@ -77,7 +78,7 @@ function readFileAsDataUrl(file) {
             reject(new Error('Can not read file'));
         };
 
-        reader.readAsDataURL(file)
+        reader.readAsDataURL(file);
     });
 }
 
